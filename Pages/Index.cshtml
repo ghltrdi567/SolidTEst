@@ -1,0 +1,185 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Домашнняя страница";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Тестовое задание для Финансового дома "Солид"</h1>
+    <h1 class="h3 mt-3">Запись в базу данных</h1>
+    <form method="post">
+    <div class="input-group mb-3">
+        
+            <span class="input-group-text" >Начало отслеживания курсов валют</span>
+            <input type="date" class="form-control" id="bd_start_date" name="bd_start_date" required>
+            <span class="input-group-text" >Конец отслеживания курсов валют</span>
+            <input type="date" class="form-control" id="bd_end_date" name="bd_end_date" required>
+            <div class="input-group-append">
+                <button class="btn btn-outline-primary" asp-page-handler="Record" type="submit">Сохранить в Базу данных</button>
+            </div>
+
+    </div>
+    </form>
+
+    <h1 class="h3 mt-3">Отображение данных</h1>
+    
+    <div class="input-group mb-3">
+        
+            <span class="input-group-text">Дата </span>
+            <input type="date" name="displayAllValutesDate" id="displayAllValutesDate" class="form-control">
+            <div class="input-group-append">
+
+                <button class="btn btn-outline-primary" onclick="displayAllValutesDate()" type="button">Отобразить</button>
+
+            </div>
+
+
+        
+        
+        
+    </div>
+   
+    <div class="input-group mb-3">
+        
+        <span class="input-group-text" >Выберите Валюту для просмотра</span>
+        <select class="form-control" id="ValuteChoose">
+
+            @foreach (var a in Model.CurrencyList)
+            {
+                <option value="@a.ID" >@a.Name</option>
+
+            }
+           
+        </select>
+        <div class="input-group-append">
+
+            <button class="btn btn-outline-primary" onclick="displayValute()" type="button">Отобразить</button>
+
+        </div>
+    </div>
+    
+    @if(Model.DISPLAY_MODE == 1)
+    {
+        <h5 class="m-2">Валюта: <strong>@Model.DynamicCurrency.Name</strong>  Цифровой код: <strong>@Model.DynamicCurrency.NumCode</strong> Буквенный код: <strong>@Model.DynamicCurrency.CharCode</strong></h5>
+
+        <p class="h2 m-2">Курс валюты</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Дата</th>
+                    <th scope="col">Номинал</th>
+                    <th scope="col">Курс, руб</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                    @foreach (var j in Model.DynamicCurrency.Rates){
+
+
+                    <tr>
+                        <th scope="row">@j.Date</th>
+                            <td>@j.Nominal</td>
+                            <td>@j.Rate</td>
+
+                    </tr>
+
+
+                    }
+
+               
+                
+            </tbody>
+        </table>
+
+
+    }
+
+    @if (Model.DISPLAY_MODE == 2)
+    {
+        <p class="h2 m-2">Курсы валют на @Model.Display_Currency_Date.ToString()</p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Буквенный код</th>
+                    <th scope="col">Цифровой код</th>
+                    <th scope="col">Название валюты</th>
+                    <th scope="col">Номинал</th>
+                    <th scope="col">Курс, руб</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var j in Model.CurrencyToDate)
+                {
+
+
+                    <tr>
+                        <th scope="row">@j.CharCode</th>
+                        <td>@j.NumCode</td>
+                        <td>@j.Name</td>
+                        <td>@j.Nominal</td>
+                        <td>@j.Rate</td>
+
+                    </tr>
+
+
+                }
+
+
+
+            </tbody>
+        </table>
+
+
+
+
+
+    }
+
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+   
+
+    //Даты большие чем сегодня - disabled
+    $(function(){
+        var dtToday = new Date();
+
+        var month = dtToday.getMonth() + 1;
+        var day = dtToday.getDate();
+        var year = dtToday.getFullYear();
+        if(month < 10)
+            month = '0' + month.toString();
+        if(day < 10)
+            day = '0' + day.toString();
+
+        var maxDate = year + '-' + month + '-' + day;
+        
+        $('#bd_start_date').attr('max', maxDate);
+        $('#bd_end_date').attr('max', maxDate);
+        $('#displayAllValutesDate').attr('max', maxDate);
+    });
+
+    function displayValute(){
+
+        window.location.href = getPathFromUrl(window.location.href) + '?DISPLAY_MODE=1&DispalayСurrencyID=' + document.getElementById('ValuteChoose').value;
+        
+    }
+
+    function displayAllValutesDate(){
+
+
+        window.location.href = getPathFromUrl(window.location.href) + '?DISPLAY_MODE=2&DispalayСurrencyDate=' + document.getElementById('displayAllValutesDate').value;
+
+    }
+
+    //Возвращает путь без строки запроса
+    function getPathFromUrl(url) {
+        return url.split(/[?#]/)[0];
+    }
+
+</script>
+
