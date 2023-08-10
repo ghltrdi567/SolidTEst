@@ -4,7 +4,7 @@ namespace Test2.Repository.DB.Entities
 {
     public class CurrencyWithRateEntity : CurrencyEntity
     {
-        public CurrencyWithRateEntity(string iD, string numCode, string? charCode, string? name, int nominal, decimal rate, DateOnly date) : base(iD, numCode, charCode, name)
+        public CurrencyWithRateEntity(string iD, string numCode, string? charCode, string? name, int nominal, float rate, DateOnly date) : base(iD, numCode, charCode, name)
         {
             Nominal = nominal;
             Rate = rate;
@@ -20,7 +20,7 @@ namespace Test2.Repository.DB.Entities
 
         public int Nominal { get; set; }
 
-        public decimal Rate { get; set; }
+        public float Rate { get; set; }
 
         public DateOnly Date { get; set; }
 

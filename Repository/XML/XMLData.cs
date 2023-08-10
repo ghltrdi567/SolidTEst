@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using SolidBrokerTest.Repository.DB.Entities;
 using System;
 using Test2.Repository.DB.Entities;
+using System.Xml.Schema;
 
 namespace SolidBrokerTest.Repository.XML
 {
@@ -24,28 +25,33 @@ namespace SolidBrokerTest.Repository.XML
         public static async Task<SolidBrokerTest.Repository.XML.Daily.ValCurs?> GetDailyDataAsync(DateOnly date)
         {
             SolidBrokerTest.Repository.XML.Daily.ValCurs? result = null;
-            using (var client = new HttpClient())
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(SolidBrokerTest.Repository.XML.Daily.ValCurs));
-                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            //using (var client = new HttpClient())
+            //{
+            //    XmlSerializer serializer = new XmlSerializer(typeof(SolidBrokerTest.Repository.XML.Daily.ValCurs));
+            //    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
-                var content = await client.GetAsync(DailyDataBaseURL + $"?date_req={date.Day.ToString("00")}/{date.Month.ToString("00")}/{date.Year.ToString("0000")}");
+            //    var content = await client.GetAsync(DailyDataBaseURL + $"?date_req={date.Day.ToString("00")}/{date.Month.ToString("00")}/{date.Year.ToString("0000")}");
 
-                if(content.Content != null)
-                {
-                    using (var sr = new StreamReader(await content.Content.ReadAsStreamAsync(), Encoding.GetEncoding("windows-1251")))
-                    {
-                         result = serializer.Deserialize(sr.BaseStream) as SolidBrokerTest.Repository.XML.Daily.ValCurs;
-
-                    }
+            //    if(content.Content != null)
+            //    {
+            //        using (var sr = new StreamReader(await content.Content.ReadAsStreamAsync(), Encoding.GetEncoding("windows-1251")))
+            //        {
+            //             result = serializer.Deserialize(sr.BaseStream) as SolidBrokerTest.Repository.XML.Daily.ValCurs;
 
 
-                }
+
+
+            //        }
+
+
+            //    }
 
                 
 
 
-            }
+            //}
+
+             result = LoadFromXmlWithDTD<Daily.ValCurs?>(DailyDataBaseURL + $"?date_req={date.Day.ToString("00")}/{date.Month.ToString("00")}/{date.Year.ToString("0000")}", validationCallBack: ValidationCallBack);
 
 
 
@@ -89,7 +95,7 @@ namespace SolidBrokerTest.Repository.XML
 
             for (int i = 0; i < valCurs.Record.Length; i++)
             {
-                rates.Add(new RateEntity(valCurs.Record[i].Id, Convert.ToInt32(valCurs.Record[i].Nominal), Convert.ToDecimal(valCurs.Record[i].Value), ParseDate(valCurs.Record[i].Date) ?? new DateOnly()));
+                rates.Add(new RateEntity(valCurs.Record[i].Id, Convert.ToInt32(valCurs.Record[i].Nominal), Convert.ToSingle(valCurs.Record[i].Value), ParseDate(valCurs.Record[i].Date) ?? new DateOnly()));
 
 
             }
@@ -108,7 +114,7 @@ namespace SolidBrokerTest.Repository.XML
             for (int i = 0; i < curs.Valute.Length; i++)
             {
 
-                Currensies.Add(new CurrencyWithRateEntity(curs.Valute[i].ID, curs.Valute[i].NumCode, curs.Valute[i].CharCode, curs.Valute[i].Name, Convert.ToInt32(curs.Valute[i].Nominal), Convert.ToDecimal(curs.Valute[i].Value), ParseDate(curs.Date) ?? new DateOnly()));
+                Currensies.Add(new CurrencyWithRateEntity(curs.Valute[i].ID, curs.Valute[i].NumCode, curs.Valute[i].CharCode, curs.Valute[i].Name, Convert.ToInt32(curs.Valute[i].Nominal), Convert.ToSingle(curs.Valute[i].Value), ParseDate(curs.Date) ?? new DateOnly()));
 
 
             }
@@ -169,5 +175,32 @@ namespace SolidBrokerTest.Repository.XML
 
             return result;
         }
+
+
+
+       
+            public static T LoadFromXmlWithDTD<T>(string url, XmlSerializer serial = default, ValidationEventHandler validationCallBack = default)
+            {
+                var settings = new XmlReaderSettings
+                {
+                    
+                    DtdProcessing = DtdProcessing.Parse,
+                    IgnoreWhitespace = true,
+                };
+                settings.ValidationEventHandler += validationCallBack;
+                serial = serial ?? new XmlSerializer(typeof(T));
+                using (var reader = XmlReader.Create(url, settings))
+                    return (T)serial.Deserialize(reader);
+            }
+
+        private static void ValidationCallBack(object sender, ValidationEventArgs e)
+        {
+            if (e.Severity == XmlSeverityType.Warning)
+                Console.WriteLine("Warning: Matching schema not found.  No validation occurred." + e.Message);
+            else // Error
+                Console.WriteLine("Validation error: " + e.Message);
+        }
+
+
     }
 }

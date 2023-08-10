@@ -239,10 +239,17 @@ namespace Test2.Repository.DB
             catch (Exception ex)
             {
                 
-                Console.WriteLine("Exception: " + ex.Message);
+                Console.WriteLine("Exception: " + ex.Message + $"ID={ID}");
             }
 
 
+
+
+        }
+
+        public static void AddCurrencyIfNotExists(CurrencyEntity input)
+        {
+            AddCurrencyIfNotExists(input.ID, input.NumCode ?? "", input.CharCode ?? "", input.Name ?? "");
 
 
         }
@@ -286,7 +293,7 @@ namespace Test2.Repository.DB
             catch (Exception ex)
             {
 
-                Console.WriteLine("Exception: " + ex.Message);
+                Console.WriteLine("Exception: " + ex.Message + $"ID={ID}");
             }
 
 
@@ -361,7 +368,6 @@ namespace Test2.Repository.DB
 
         }
 
-
         public static List<RateEntity> GetRatesToDate(DateOnly Date)
         {
 
@@ -393,7 +399,7 @@ namespace Test2.Repository.DB
                         {
                             while (dr.Read())
                             {
-                                result.Add(new RateEntity(dr.GetString(0), dr.GetInt32(1), (decimal)dr.GetDouble(2), new DateOnly(Date.Year, Date.Month, Date.Day)));
+                                result.Add(new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetFloat(2), new DateOnly(Date.Year, Date.Month, Date.Day)));
 
                                 
                             }
@@ -429,12 +435,7 @@ namespace Test2.Repository.DB
 
         }
 
-        public static void AddCurrencyIfNotExists(CurrencyEntity input)
-        {
-            AddCurrencyIfNotExists(input.ID, input.NumCode, input.CharCode?? "", input.Name ?? "");
-
-            
-        }
+        
 
 
         public static void DeleteCurrency(string ID)
@@ -503,7 +504,7 @@ namespace Test2.Repository.DB
                                 
                                 DateTime date = dr.GetDateTime(3);
 
-                                result.Add(new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetDecimal(2), new DateOnly(date.Year, date.Month, date.Day)));
+                                result.Add(new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetFloat(2), new DateOnly(date.Year, date.Month, date.Day)));
 
                                 
                             }
@@ -566,7 +567,7 @@ namespace Test2.Repository.DB
                             {
                                 DateTime date = dr.GetDateTime(3);
 
-                                result = new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetDecimal(2), new DateOnly(date.Year, date.Month, date.Day));
+                                result = new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetFloat(2), new DateOnly(date.Year, date.Month, date.Day));
                                 break;
                             }
                         }
@@ -630,7 +631,10 @@ namespace Test2.Repository.DB
                             {
                                 DateTime date = dr.GetDateTime(3);
 
-                                result.Add( new RateEntity(dr.GetString(0), dr.GetInt32(1), (decimal)dr.GetDouble(2), new DateOnly(date.Year, date.Month, date.Day)));
+                                //result.Add( new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetFloat(2), new DateOnly(date.Year, date.Month, date.Day)));
+                                result.Add( new RateEntity(dr.GetString(0), dr.GetInt32(1), Convert.ToSingle(dr.GetValue(2)), new DateOnly(date.Year, date.Month, date.Day)));
+
+
                                 
                             }
                         }
@@ -660,7 +664,7 @@ namespace Test2.Repository.DB
             return result;
         }
 
-        public static void AddRate(string ValuteID, int Nominal, decimal Value, DateOnly Date)
+        public static void AddRate(string ValuteID, int Nominal, float Value, DateOnly Date)
         {
 
             try
@@ -677,7 +681,7 @@ namespace Test2.Repository.DB
                     {
                         cmd.Parameters.Add("@ValuteID", SqlDbType.NVarChar, 10).Value = ValuteID;
                         cmd.Parameters.Add("@Nominal", SqlDbType.Int, 5).Value = Nominal;
-                        cmd.Parameters.Add("@Value", SqlDbType.Decimal, 10).Value = Value;
+                        cmd.Parameters.Add("@Value", SqlDbType.Float, 10).Value = Value;
                         cmd.Parameters.Add("@Date", SqlDbType.Date, 50).Value = new DateTime(Date.Year,Date.Month, Date.Day);
 
 
@@ -702,7 +706,7 @@ namespace Test2.Repository.DB
         }
 
 
-        public static void AddRateIfNotExists(string ValuteID, int Nominal, decimal Value, DateOnly Date)
+        public static void AddRateIfNotExists(string ValuteID, int Nominal, float Value, DateOnly Date)
         {
 
             try
@@ -742,7 +746,7 @@ namespace Test2.Repository.DB
             catch (Exception ex)
             {
 
-                Console.WriteLine("Exception: " + ex.Message);
+                Console.WriteLine("Exception: " + ex.Message + $"ID={ValuteID} Date= {Date}");
             }
 
 

@@ -8,11 +8,11 @@ namespace SolidBrokerTest.Repository.DB.Entities
         public string ValuteID { get; set; }
         public int Nominal { get; set; }
 
-        public decimal Rate { get; set; }
+        public float Rate { get; set; }
 
         public DateOnly Date { get; set; }
 
-        public RateEntity(string valuteid, int nominal, decimal rate, DateOnly date)
+        public RateEntity(string valuteid, int nominal, float rate, DateOnly date)
         {
             ValuteID = valuteid;
             Nominal = nominal;
