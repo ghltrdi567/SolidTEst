@@ -21,7 +21,7 @@ namespace Test2.Pages
 
         public List<CurrencyWithRateEntity> CurrencyToDate = new List<CurrencyWithRateEntity>();
 
-        public List<CurrencyEntity> CurrencyList = SQLHandlers.GetAllCurrency();
+        public List<CurrencyEntity> CurrencyList = new List<CurrencyEntity>(); 
 
 
         public Repository.DB.Entities.DynamicCurrency? DynamicCurrency { get; set; } = null;
@@ -35,6 +35,8 @@ namespace Test2.Pages
         {
             SQLHandlers.CreateCurrencyTable();
             SQLHandlers.CreateRateTable();
+
+            CurrencyList = SQLHandlers.GetAllCurrency();
 
             if (Request.Query.ContainsKey("DISPLAY_MODE"))
             {
@@ -71,7 +73,7 @@ namespace Test2.Pages
             //по валюте(и датам)
             if (DISPLAY_MODE == 1)
             {
-
+                
                 DynamicCurrency = DBEntityHandlers.GetAllCurrencyRate(Display_Currency_ID);
 
             }

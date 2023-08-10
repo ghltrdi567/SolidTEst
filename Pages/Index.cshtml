@@ -15,11 +15,19 @@
             <span class="input-group-text" >Конец отслеживания курсов валют</span>
             <input type="date" class="form-control" id="bd_end_date" name="bd_end_date" required>
             <div class="input-group-append">
-                <button class="btn btn-outline-primary" asp-page-handler="Record" type="submit">Сохранить в Базу данных</button>
+                <button class="btn btn-outline-primary" asp-page-handler="Record" onclick="LoadClick()" type="submit">Сохранить в Базу данных</button>
             </div>
 
+            
     </div>
     </form>
+
+    <div class="alert alert-primary" id="loadMessage" style="display: none;" role="alert">
+        <div class="d-flex align-items-center">
+            <strong>Загрузка...</strong>
+            <div class="spinner-border ml-auto" role="status" aria-hidden="true"></div>
+        </div>
+    </div>
 
     <h1 class="h3 mt-3">Отображение данных</h1>
     
@@ -161,6 +169,12 @@
         $('#bd_start_date').attr('max', maxDate);
         $('#bd_end_date').attr('max', maxDate);
         $('#displayAllValutesDate').attr('max', maxDate);
+
+
+        $('#bd_start_date').attr('min', '1992-07-01');
+        $('#bd_end_date').attr('min', '1992-07-01');
+        $('#displayAllValutesDate').attr('min', '1992-07-01');
+        
     });
 
     function displayValute(){
@@ -179,6 +193,13 @@
     //Возвращает путь без строки запроса
     function getPathFromUrl(url) {
         return url.split(/[?#]/)[0];
+    }
+
+    function LoadClick(){
+
+
+        document.getElementById('loadMessage').style.display = "block";
+        
     }
 
 </script>

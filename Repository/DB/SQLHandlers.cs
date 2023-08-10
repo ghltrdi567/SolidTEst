@@ -610,7 +610,7 @@ namespace Test2.Repository.DB
 
                     string query = @"SELECT e.ValuteID,e.Nominal,e.Value,e.Date
                                      FROM Rate e WHERE e.ValuteID=@ValuteID
-                                     ";
+                                     ORDER BY Date";
 
 
 
@@ -693,7 +693,7 @@ namespace Test2.Repository.DB
             catch (Exception ex)
             {
 
-                Console.WriteLine("Exception: " + ex.Message);
+                Console.WriteLine("Exception: " + ex.Message + $"ID={ValuteID} Date= {Date}");
             }
 
 

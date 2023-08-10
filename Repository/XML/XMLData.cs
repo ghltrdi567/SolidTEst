@@ -103,6 +103,8 @@ namespace SolidBrokerTest.Repository.XML
         {
             var Currensies = new List<CurrencyWithRateEntity>();
 
+            if (curs.Valute == null) return Currensies;
+
             for (int i = 0; i < curs.Valute.Length; i++)
             {
 
