@@ -103,7 +103,8 @@ namespace Test2.Pages
             var end_str = ParseDate(Request.Form["bd_end_date"].ToString());
 
 
-            DBEntityHandlers.RecordData(start_str, end_str);
+            //DBEntityHandlers.RecordData(start_str, end_str);
+            DBEntityHandlers.RecordDataByDates(start_str?? new DateOnly(), end_str ?? new DateOnly());
 
             Response.Redirect(Request.Path);
         }

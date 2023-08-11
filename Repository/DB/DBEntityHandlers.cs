@@ -6,10 +6,10 @@ namespace Test2.Repository.DB
 {
     public class DBEntityHandlers
     {
-        public async static void RecordData(DateOnly? start, DateOnly? end)
+        public static void RecordData(DateOnly? start, DateOnly? end)
         {
             if (start == null || end == null) return;
-            var dataFromXML = await XMLData.GetCurrencyToDate(start?? new DateOnly(), end ?? new DateOnly());
+            var dataFromXML = XMLData.GetCurrencyToDate(start?? new DateOnly(), end ?? new DateOnly());
 
             foreach (var item in dataFromXML)
             {
@@ -20,6 +20,48 @@ namespace Test2.Repository.DB
             }
 
         }
+
+        public static void RecordDataByDates(DateOnly start, DateOnly end)
+        {
+
+            int daysInScope = end.DayNumber - start.DayNumber;
+
+            if (daysInScope < 0)
+            {
+                Console.WriteLine("Ошибка, дата начала должна быть раньше даты конца");
+
+                return;
+
+            }
+            for (int i = 0; i < daysInScope; i++)
+            {
+                RecordData(start.AddDays(i));
+            }
+
+            
+
+
+        }
+
+        public static void RecordData(DateOnly? Data)
+        {
+            if (Data == null) return;
+
+            var dataFromXML = XMLData.GetCurrencyToDate(Data?? new DateOnly());
+
+
+            foreach (var item in dataFromXML)
+            {
+                SQLHandlers.AddCurrencyIfNotExists(item.GetCurrency());
+
+                SQLHandlers.AddRateIfNotExists(item.GetRate());
+
+            }
+
+            Console.WriteLine($"В БД Записаны валюты за дату {Data}");
+        }
+
+
 
         public static Entities.DynamicCurrency? GetAllCurrencyRate(string Current_ID) {
 

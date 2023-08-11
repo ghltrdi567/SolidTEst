@@ -105,7 +105,7 @@ namespace SolidBrokerTest.Repository.XML
         }
 
 
-        public static List<CurrencyWithRateEntity> GetCurrencyToDate(Daily.ValCurs curs)
+        public static List<CurrencyWithRateEntity> GetCurrencyWithRateToDate(Daily.ValCurs curs)
         {
             var Currensies = new List<CurrencyWithRateEntity>();
 
@@ -113,8 +113,20 @@ namespace SolidBrokerTest.Repository.XML
 
             for (int i = 0; i < curs.Valute.Length; i++)
             {
+                float try_value = 0;
+                try
+                {
+                    try_value = Convert.ToSingle(curs.Valute[i].Value.Replace('.',','));
+                }
+                catch (Exception e)
+                {
 
-                Currensies.Add(new CurrencyWithRateEntity(curs.Valute[i].ID, curs.Valute[i].NumCode, curs.Valute[i].CharCode, curs.Valute[i].Name, Convert.ToInt32(curs.Valute[i].Nominal), Convert.ToSingle(curs.Valute[i].Value), ParseDate(curs.Date) ?? new DateOnly()));
+                    Console.WriteLine($"Ошибка в преобразовании строки {curs.Valute[i].Value} в число:" + e.Message) ;
+                }
+
+                
+
+                Currensies.Add(new CurrencyWithRateEntity(curs.Valute[i].ID, curs.Valute[i].NumCode, curs.Valute[i].CharCode, curs.Valute[i].Name, Convert.ToInt32(curs.Valute[i].Nominal), try_value, ParseDate(curs.Date) ?? new DateOnly()));
 
 
             }
@@ -146,7 +158,7 @@ namespace SolidBrokerTest.Repository.XML
         
 
 
-        public static async Task<List<CurrencyWithRateEntity>> GetCurrencyToDate(DateOnly begin, DateOnly End)
+        public static List<CurrencyWithRateEntity> GetCurrencyToDate(DateOnly begin, DateOnly End)
         {
 
             
@@ -168,7 +180,7 @@ namespace SolidBrokerTest.Repository.XML
             {
                 var first = GetDailyDataAsync(begin.AddDays(i)).Result;
                 if (first == null) continue;
-                result.AddRange(GetCurrencyToDate( first));
+                result.AddRange(GetCurrencyWithRateToDate(first));
 
                 
             }
@@ -177,8 +189,18 @@ namespace SolidBrokerTest.Repository.XML
         }
 
 
+        public static List<CurrencyWithRateEntity> GetCurrencyToDate(DateOnly Date)
+        {
 
-       
+
+            return GetCurrencyWithRateToDate(GetDailyDataAsync(Date).Result);
+
+        }
+
+
+
+
+
             public static T LoadFromXmlWithDTD<T>(string url, XmlSerializer serial = default, ValidationEventHandler validationCallBack = default)
             {
                 var settings = new XmlReaderSettings
