@@ -10,6 +10,7 @@ using SolidBrokerTest.Repository.DB.Entities;
 using System;
 using Test2.Repository.DB.Entities;
 using System.Xml.Schema;
+using System.Globalization;
 
 namespace SolidBrokerTest.Repository.XML
 {
@@ -88,21 +89,21 @@ namespace SolidBrokerTest.Repository.XML
         }
 
 
-        public static DynamicCurrencyEnity GetDynamicCurrency(Dynamic.ValCurs valCurs)
-        {
+        //public static DynamicCurrencyEnity GetDynamicCurrency(Dynamic.ValCurs valCurs)
+        //{
 
-            List<RateEntity> rates = new List<DB.Entities.RateEntity> ();
+        //    List<RateEntity> rates = new List<DB.Entities.RateEntity> ();
 
-            for (int i = 0; i < valCurs.Record.Length; i++)
-            {
-                rates.Add(new RateEntity(valCurs.Record[i].Id, Convert.ToInt32(valCurs.Record[i].Nominal), Convert.ToSingle(valCurs.Record[i].Value), ParseDate(valCurs.Record[i].Date) ?? new DateOnly()));
+        //    for (int i = 0; i < valCurs.Record.Length; i++)
+        //    {
+        //        rates.Add(new RateEntity(valCurs.Record[i].Id, Convert.ToInt32(valCurs.Record[i].Nominal), Convert.ToSingle(valCurs.Record[i].Value), ParseDate(valCurs.Record[i].Date) ?? new DateOnly()));
 
 
-            }
+        //    }
 
-            return new DynamicCurrencyEnity(valCurs.ID, rates);
+        //    return new DynamicCurrencyEnity(valCurs.ID, rates);
 
-        }
+        //}
 
 
         public static List<CurrencyWithRateEntity> GetCurrencyWithRateToDate(Daily.ValCurs curs)
@@ -113,15 +114,16 @@ namespace SolidBrokerTest.Repository.XML
 
             for (int i = 0; i < curs.Valute.Length; i++)
             {
-                float try_value = 0;
+                float try_value = default;
                 try
                 {
-                    try_value = Convert.ToSingle(curs.Valute[i].Value.Replace('.',','));
+                    try_value = Convert.ToSingle(curs.Valute[i].Value, new CultureInfo("ru-RU"));
                 }
                 catch (Exception e)
                 {
 
-                    Console.WriteLine($"Ошибка в преобразовании строки {curs.Valute[i].Value} в число:" + e.Message) ;
+                    Console.WriteLine($"Ошибка в преобразовании строки {curs.Valute[i].Value} в число:" + e.Message);
+                    return Currensies;
                 }
 
                 
