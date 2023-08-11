@@ -24,7 +24,7 @@ namespace Test2.Repository.DB
         public static void RecordDataByDates(DateOnly start, DateOnly end)
         {
 
-            int daysInScope = end.DayNumber - start.DayNumber;
+            int daysInScope = end.DayNumber - start.DayNumber +1;
 
             if (daysInScope < 0)
             {

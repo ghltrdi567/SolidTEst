@@ -154,10 +154,6 @@ namespace SolidBrokerTest.Repository.XML
 
         }
 
-
-        
-
-
         public static List<CurrencyWithRateEntity> GetCurrencyToDate(DateOnly begin, DateOnly End)
         {
 
@@ -166,7 +162,7 @@ namespace SolidBrokerTest.Repository.XML
 
             
 
-            int daysInScope = End.DayNumber  - begin.DayNumber;
+            int daysInScope = End.DayNumber  - begin.DayNumber +1;
 
             if (daysInScope < 0)
             {
@@ -196,9 +192,6 @@ namespace SolidBrokerTest.Repository.XML
             return GetCurrencyWithRateToDate(GetDailyDataAsync(Date).Result);
 
         }
-
-
-
 
 
             public static T LoadFromXmlWithDTD<T>(string url, XmlSerializer serial = default, ValidationEventHandler validationCallBack = default)
