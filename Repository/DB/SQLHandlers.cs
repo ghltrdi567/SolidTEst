@@ -59,7 +59,7 @@ namespace Test2.Repository.DB
                                     CREATE TABLE Rate (
 	                                ValuteID NVARCHAR(10) NOT NULL,
 	                                Nominal INT,
-	                                Value FLOAT,
+	                                Value NVARCHAR(15),
 	                                Date DATE,
 	                                 FOREIGN KEY (ValuteID) REFERENCES Currency(ID)
                                 );";
@@ -368,76 +368,6 @@ namespace Test2.Repository.DB
 
         }
 
-        public static List<RateEntity> GetRatesToDate(DateOnly Date)
-        {
-
-            var result = new List<RateEntity>();
-
-            try
-            {
-
-                using (SqlConnection conn = new SqlConnection(ConnectionString))
-                {
-
-
-                    string query = @"SELECT e.ValuteID,e.Nominal,e.Value,e.Date
-                                     FROM Rate e WHERE e.Date=@Date ORDER BY ValuteID ASC, Date
-                                     ";
-
-
-
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.Add("@Date", SqlDbType.Date, 50).Value = new DateTime(Date.Year, Date.Month, Date.Day);
-                        conn.Open();
-
-
-                        SqlDataReader dr = cmd.ExecuteReader();
-
-
-                        if (dr.HasRows)
-                        {
-                            while (dr.Read())
-                            {
-                                result.Add(new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetFloat(2), new DateOnly(Date.Year, Date.Month, Date.Day)));
-
-                                
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Не найдено данных о валютах на дату с ID={Date.ToString()}.");
-
-                        }
-
-
-                        dr.Close();
-
-
-                        conn.Close();
-
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-
-                Console.WriteLine("Exception: " + ex.Message);
-            }
-
-
-
-            return result;
-
-
-
-
-
-        }
-
-        
-
-
         public static void DeleteCurrency(string ID)
         {
             try
@@ -504,7 +434,7 @@ namespace Test2.Repository.DB
                                 
                                 DateTime date = dr.GetDateTime(3);
 
-                                result.Add(new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetFloat(2), new DateOnly(date.Year, date.Month, date.Day)));
+                                result.Add(new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetString(2), new DateOnly(date.Year, date.Month, date.Day)));
 
                                 
                             }
@@ -567,7 +497,7 @@ namespace Test2.Repository.DB
                             {
                                 DateTime date = dr.GetDateTime(3);
 
-                                result = new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetFloat(2), new DateOnly(date.Year, date.Month, date.Day));
+                                result = new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetString(2), new DateOnly(date.Year, date.Month, date.Day));
                                 break;
                             }
                         }
@@ -597,6 +527,72 @@ namespace Test2.Repository.DB
             return result;
         }
 
+        public static List<RateEntity> GetRatesToDate(DateOnly Date)
+        {
+
+            var result = new List<RateEntity>();
+
+            try
+            {
+
+                using (SqlConnection conn = new SqlConnection(ConnectionString))
+                {
+
+
+                    string query = @"SELECT e.ValuteID,e.Nominal,e.Value,e.Date
+                                     FROM Rate e WHERE e.Date=@Date ORDER BY ValuteID ASC, Date
+                                     ";
+
+
+
+                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    {
+                        cmd.Parameters.Add("@Date", SqlDbType.Date, 50).Value = new DateTime(Date.Year, Date.Month, Date.Day);
+                        conn.Open();
+
+
+                        SqlDataReader dr = cmd.ExecuteReader();
+
+
+                        if (dr.HasRows)
+                        {
+                            while (dr.Read())
+                            {
+                                result.Add(new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetString(2), new DateOnly(Date.Year, Date.Month, Date.Day)));
+
+
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Не найдено данных о валютах на дату с ID={Date.ToString()}.");
+
+                        }
+
+
+                        dr.Close();
+
+
+                        conn.Close();
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine("Exception: " + ex.Message);
+            }
+
+
+
+            return result;
+
+
+
+
+
+        }
 
         public static List<RateEntity> GetRates(string ValuteID)
         {
@@ -631,8 +627,8 @@ namespace Test2.Repository.DB
                             {
                                 DateTime date = dr.GetDateTime(3);
 
-                                //result.Add( new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetFloat(2), new DateOnly(date.Year, date.Month, date.Day)));
-                                result.Add( new RateEntity(dr.GetString(0), dr.GetInt32(1), Convert.ToSingle(dr.GetValue(2)), new DateOnly(date.Year, date.Month, date.Day)));
+                                //result.Add( new RateEntity(dr.GetString(0), dr.GetInt32(1), , new DateOnly(date.Year, date.Month, date.Day)));
+                                result.Add( new RateEntity(dr.GetString(0), dr.GetInt32(1), dr.GetString(2), new DateOnly(date.Year, date.Month, date.Day)));
 
 
                                 
@@ -664,7 +660,7 @@ namespace Test2.Repository.DB
             return result;
         }
 
-        public static void AddRate(string ValuteID, int Nominal, float Value, DateOnly Date)
+        public static void AddRate(string ValuteID, int Nominal, string Value, DateOnly Date)
         {
 
             try
@@ -681,7 +677,7 @@ namespace Test2.Repository.DB
                     {
                         cmd.Parameters.Add("@ValuteID", SqlDbType.NVarChar, 10).Value = ValuteID;
                         cmd.Parameters.Add("@Nominal", SqlDbType.Int, 5).Value = Nominal;
-                        cmd.Parameters.Add("@Value", SqlDbType.Float, 10).Value = Value;
+                        cmd.Parameters.Add("@Value", SqlDbType.NVarChar, 15).Value = Value;
                         cmd.Parameters.Add("@Date", SqlDbType.Date, 50).Value = new DateTime(Date.Year,Date.Month, Date.Day);
 
 
@@ -706,7 +702,7 @@ namespace Test2.Repository.DB
         }
 
 
-        public static void AddRateIfNotExists(string ValuteID, int Nominal, float Value, DateOnly Date)
+        public static void AddRateIfNotExists(string ValuteID, int Nominal, string Value, DateOnly Date)
         {
 
             try
@@ -730,7 +726,7 @@ namespace Test2.Repository.DB
                     {
                         cmd.Parameters.Add("@ValuteID", SqlDbType.NVarChar, 10).Value = ValuteID;
                         cmd.Parameters.Add("@Nominal", SqlDbType.Int, 5).Value = Nominal;
-                        cmd.Parameters.Add("@Value", SqlDbType.Float, 10).Value = Value;
+                        cmd.Parameters.Add("@Value", SqlDbType.NVarChar, 15).Value = Value;
                         cmd.Parameters.Add("@Date", SqlDbType.Date, 50).Value = new DateTime(Date.Year, Date.Month, Date.Day);
 
 

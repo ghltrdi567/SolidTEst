@@ -114,21 +114,21 @@ namespace SolidBrokerTest.Repository.XML
 
             for (int i = 0; i < curs.Valute.Length; i++)
             {
-                float try_value = default;
-                try
-                {
-                    try_value = Convert.ToSingle(curs.Valute[i].Value, new CultureInfo("ru-RU"));
-                }
-                catch (Exception e)
-                {
+                //float try_value = default;
+                //try
+                //{
+                //    try_value = Convert.ToSingle(curs.Valute[i].Value, new CultureInfo("ru-RU"));
+                //}
+                //catch (Exception e)
+                //{
 
-                    Console.WriteLine($"Ошибка в преобразовании строки {curs.Valute[i].Value} в число:" + e.Message);
-                    return Currensies;
-                }
+                //    Console.WriteLine($"Ошибка в преобразовании строки {curs.Valute[i].Value} в число:" + e.Message);
+                //    return Currensies;
+                //}
 
                 
 
-                Currensies.Add(new CurrencyWithRateEntity(curs.Valute[i].ID, curs.Valute[i].NumCode, curs.Valute[i].CharCode, curs.Valute[i].Name, Convert.ToInt32(curs.Valute[i].Nominal), try_value, ParseDate(curs.Date) ?? new DateOnly()));
+                Currensies.Add(new CurrencyWithRateEntity(curs.Valute[i].ID, curs.Valute[i].NumCode, curs.Valute[i].CharCode, curs.Valute[i].Name, Convert.ToInt32(curs.Valute[i].Nominal), curs.Valute[i].Value, ParseDate(curs.Date) ?? new DateOnly()));
 
 
             }
