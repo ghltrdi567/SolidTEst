@@ -63,46 +63,52 @@ namespace Test2.Repository.DB
 
 
 
-        public static Entities.DynamicCurrency? GetAllCurrencyRate(string Current_ID) {
+        public static Entities.DynamicCurrency? GetAllCurrencyRate(string Current_ID, ref string Error_message) {
 
             var rates = new List<RateEntity>();
 
-            var Current_info = SQLHandlers.GetCurrency(Current_ID);
+            string error_message = string.Empty;
+
+            var Current_info = SQLHandlers.GetCurrency(Current_ID, ref error_message);
 
             if (Current_info == null)
             {
-                Console.WriteLine($"Ошибка в получении курса валюты с ID {Current_ID}");
+                Console.WriteLine($"Ошибка в получении курса валюты с ID {Current_ID} :");
+                
                 return null;
 
             }
 
-            foreach (var item in SQLHandlers.GetRates(Current_ID))
+            foreach (var item in SQLHandlers.GetRates(Current_ID, ref error_message))
             {
                 rates.Add(item);
 
             }
 
+            Error_message = error_message;
             return new Entities.DynamicCurrency(Current_info.ID, rates, Current_info.NumCode, Current_info.CharCode, Current_info.Name);
         
         }
 
 
-        public static List<CurrencyWithRateEntity> GetCurrencyRatesToDate(DateOnly date)
+        public static List<CurrencyWithRateEntity> GetCurrencyRatesToDate(DateOnly date, ref string Error_massage)
         {
+            string error_message = string.Empty;    
+
             var result = new List<CurrencyWithRateEntity>();
 
-            var rateList = SQLHandlers.GetRatesToDate(date);
+            var rateList = SQLHandlers.GetRatesToDate(date, ref error_message);
 
             
 
             foreach (var rate in rateList)
             {
-                var currency = SQLHandlers.GetCurrency(rate.ValuteID);
+                var currency = SQLHandlers.GetCurrency(rate.ValuteID, ref error_message);
 
                 if (currency != null) { result.Add(new CurrencyWithRateEntity(currency.ID, currency.NumCode, currency.CharCode, currency.Name, rate.Nominal, rate.Rate, rate.Date)); }
 
             }
-
+            Error_massage = error_message;
             return result;
         }
 

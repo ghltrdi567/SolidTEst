@@ -17,11 +17,13 @@ namespace Test2.Pages
 
         string Display_Currency_ID = "R01235";
 
-        public DateOnly Display_Currency_Date = new DateOnly(2015, 12, 24);
+        public DateOnly Display_Currency_Date = new DateOnly(1995, 12, 24);
 
         public List<CurrencyWithRateEntity> CurrencyToDate = new List<CurrencyWithRateEntity>();
 
-        public List<CurrencyEntity> CurrencyList = new List<CurrencyEntity>(); 
+        public List<CurrencyEntity> CurrencyList = new List<CurrencyEntity>();
+
+        public string Error_Message = string.Empty;
 
 
         public Repository.DB.Entities.DynamicCurrency? DynamicCurrency { get; set; } = null;
@@ -33,10 +35,10 @@ namespace Test2.Pages
 
         public async void OnGet()
         {
-            SQLHandlers.CreateCurrencyTable();
-            SQLHandlers.CreateRateTable();
+            //SQLHandlers.CreateCurrencyTable();
+            //SQLHandlers.CreateRateTable();
 
-            CurrencyList = SQLHandlers.GetAllCurrency();
+            
 
             if (Request.Query.ContainsKey("DISPLAY_MODE"))
             {
@@ -67,21 +69,40 @@ namespace Test2.Pages
 
             }
 
-            
+            if (Request.Query.ContainsKey("DropBDTables"))
+            {
+
+                StringValues someInt22;
+                Request.Query.TryGetValue("DropBDTables", out someInt22);
+
+                if (Convert.ToBoolean(someInt22) == true)
+                {
+                    SQLHandlers.DropDBTables();
+
+                    SQLHandlers.CreateDBTables();
+
+
+                }
+
+
+            }
+
+            CurrencyList = SQLHandlers.GetAllCurrency(ref Error_Message);
+
 
 
             //по валюте(и датам)
             if (DISPLAY_MODE == 1)
             {
                 
-                DynamicCurrency = DBEntityHandlers.GetAllCurrencyRate(Display_Currency_ID);
+                DynamicCurrency = DBEntityHandlers.GetAllCurrencyRate(Display_Currency_ID, ref Error_Message);
 
             }
             //дате (и всем валютам на дату)
             if (DISPLAY_MODE == 2)
             {
 
-                CurrencyToDate = DBEntityHandlers.GetCurrencyRatesToDate(Display_Currency_Date);
+                CurrencyToDate = DBEntityHandlers.GetCurrencyRatesToDate(Display_Currency_Date, ref Error_Message);
 
                
 

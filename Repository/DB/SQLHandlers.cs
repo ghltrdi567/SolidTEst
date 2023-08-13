@@ -83,8 +83,102 @@ namespace Test2.Repository.DB
 
         }
 
+
+        public static void CreateDBTables()
+        {
+            try
+            {
+
+                using (SqlConnection conn = new SqlConnection(ConnectionString))
+                {
+
+                    string query = @"IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Currency' and xtype='U')
+                                BEGIN
+                                    CREATE TABLE Currency (
+                                        ID NVARCHAR(10) NOT NULL,
+	                                    NumCode NVARCHAR(5),
+	                                    CharCode NVARCHAR(5),
+	                                    Name NVARCHAR(50),
+	                                    PRIMARY KEY (ID)
+                                    )
+                                END
+
+                                IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Rate' and xtype='U')
+                                BEGIN
+                                    CREATE TABLE Rate (
+                                         ValuteID NVARCHAR(10) NOT NULL,
+	                                     Nominal INT,
+	                                     Value NVARCHAR(15),
+	                                     Date DATE,
+	                                     FOREIGN KEY (ValuteID) REFERENCES Currency(ID)
+                                    )
+                                END";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+
+                    conn.Open();
+
+                    var a = cmd.ExecuteNonQuery();
+
+                    conn.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                //display error message
+                Console.WriteLine("Exception: " + ex.Message);
+            }
+
+
+
+
+
+        }
+
+        public static void DropDBTables()
+        {
+
+            try
+            {
+
+                using (SqlConnection conn = new SqlConnection(ConnectionString))
+                {
+
+                    string query = @"IF EXISTS (SELECT * FROM sysobjects WHERE name='Rate' and xtype='U')
+                                    BEGIN
+                                        DROP TABLE Rate 
+                                    END
+
+
+                                    IF EXISTS (SELECT * FROM sysobjects WHERE name='Currency' and xtype='U')
+                                    BEGIN
+                                        DROP TABLE Currency 
+                                    END";
+
+                    SqlCommand cmd = new SqlCommand(query, conn);
+
+                    conn.Open();
+
+                    var a = cmd.ExecuteNonQuery();
+
+                    conn.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                //display error message
+                Console.WriteLine("Exception: " + ex.Message);
+            }
+
+
+
+
+
+
+        }
+
         //Валюты
-        public static List<CurrencyEntity> GetAllCurrency()
+        public static List<CurrencyEntity> GetAllCurrency(ref string Error_Massage)
         {
             var result = new List<CurrencyEntity>();
             try
@@ -139,6 +233,7 @@ namespace Test2.Repository.DB
             {
                 
                 Console.WriteLine("Exception: " + ex.Message);
+                Error_Massage = "Exception: " + ex.Message;
             }
 
 
@@ -146,7 +241,7 @@ namespace Test2.Repository.DB
             return result;
         }
 
-        public static CurrencyEntity? GetCurrency(string ID)
+        public static CurrencyEntity? GetCurrency(string ID, ref string Error_Message)
         {
             CurrencyEntity? result = null;
 
@@ -183,7 +278,7 @@ namespace Test2.Repository.DB
                         else
                         {
                             Console.WriteLine($"Не найдено данных о валюте с ID={ID}.");
-                            
+                            Error_Message += $"Не найдено данных о валюте с ID={ID}.";
                         }
 
 
@@ -199,6 +294,7 @@ namespace Test2.Repository.DB
             {
 
                 Console.WriteLine("Exception: " + ex.Message);
+                Error_Message += "Exception: " + ex.Message;
             }
 
 
@@ -339,7 +435,7 @@ namespace Test2.Repository.DB
                         }
                         else
                         {
-                            Console.WriteLine($"Не найдено данных о валютах на дату с ID={Date.ToString()}.");
+                            Console.WriteLine($"Не найдено данных о валютах на дату {Date.ToString()}");
 
                         }
 
@@ -527,7 +623,7 @@ namespace Test2.Repository.DB
             return result;
         }
 
-        public static List<RateEntity> GetRatesToDate(DateOnly Date)
+        public static List<RateEntity> GetRatesToDate(DateOnly Date, ref string Error_Massage)
         {
 
             var result = new List<RateEntity>();
@@ -565,8 +661,8 @@ namespace Test2.Repository.DB
                         }
                         else
                         {
-                            Console.WriteLine($"Не найдено данных о валютах на дату с ID={Date.ToString()}.");
-
+                            Console.WriteLine($"Не найдено данных о валютах на дату {Date.ToString()}");
+                            Error_Massage += $"Не найдено данных о валютах на дату {Date.ToString()}";
                         }
 
 
@@ -582,6 +678,7 @@ namespace Test2.Repository.DB
             {
 
                 Console.WriteLine("Exception: " + ex.Message);
+                Error_Massage += "Exception: " + ex.Message;
             }
 
 
@@ -594,7 +691,7 @@ namespace Test2.Repository.DB
 
         }
 
-        public static List<RateEntity> GetRates(string ValuteID)
+        public static List<RateEntity> GetRates(string ValuteID, ref string Error_Message)
         {
             List<RateEntity> result = new List<RateEntity>();
 
@@ -637,7 +734,7 @@ namespace Test2.Repository.DB
                         else
                         {
                             Console.WriteLine($"Не найдено данных о Курсе валюты с ID {ValuteID}.");
-
+                            Error_Message += $"Не найдено данных о Курсе валюты с ID {ValuteID}.";
                         }
 
 
@@ -653,6 +750,8 @@ namespace Test2.Repository.DB
             {
 
                 Console.WriteLine("Exception: " + ex.Message);
+                Error_Message += $"Exception: " + ex.Message;
+
             }
 
 

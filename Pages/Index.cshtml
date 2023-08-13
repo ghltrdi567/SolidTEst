@@ -6,8 +6,9 @@
 
 <div class="text-center">
     <h1 class="display-4">Тестовое задание для Финансового дома "Солид"</h1>
+    <p><a class="link-opacity-100 m-2" href="?DropBDTables=True">Сброс Таблиц БД (при пробемах с записью или чтением)</a></p>
     <h1 class="h3 mt-3">Запись в базу данных</h1>
-    <form method="post">
+    <form method="post" id="record_data_form">
     <div class="input-group mb-3">
         
             <span class="input-group-text" >Начало отслеживания курсов валют</span>
@@ -15,7 +16,7 @@
             <span class="input-group-text" >Конец отслеживания курсов валют</span>
             <input type="date" class="form-control" id="bd_end_date" name="bd_end_date" required>
             <div class="input-group-append">
-                <button class="btn btn-outline-primary" asp-page-handler="Record" onclick="LoadClick()" type="submit">Сохранить в Базу данных</button>
+                <button class="btn btn-outline-primary" asp-page-handler="Record" onclick="" type="submit">Сохранить в Базу данных</button>
             </div>
 
             
@@ -65,8 +66,22 @@
 
         </div>
     </div>
+
+    @if(Model.Error_Message.Length != 0)
+    {
+        <div class="alert alert-danger" role="alert">
+            <div class="d-flex align-items-center">
+                <strong>@Model.Error_Message</strong>
+               
+            </div>
+        </div>
+
+
+    }
+
     
-    @if(Model.DISPLAY_MODE == 1)
+    
+    @if(Model.DISPLAY_MODE == 1 && Model.DynamicCurrency != null)
     {
         <h5 class="m-2">Валюта: <strong>@Model.DynamicCurrency.Name</strong>  Цифровой код: <strong>@Model.DynamicCurrency.NumCode</strong> Буквенный код: <strong>@Model.DynamicCurrency.CharCode</strong></h5>
 
@@ -201,6 +216,10 @@
         document.getElementById('loadMessage').style.display = "block";
         
     }
+
+
+    
+    document.getElementById("record_data_form").addEventListener("submit", LoadClick);
 
 </script>
 
