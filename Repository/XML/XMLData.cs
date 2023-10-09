@@ -22,41 +22,21 @@ namespace SolidBrokerTest.Repository.XML
         
         public static readonly string DinamicDataBaseURL = "https://www.cbr.ru/scripts/XML_dynamic.asp";
 
+        public static readonly string DibamicMetalsBaseURL = "https://www.cbr.ru/scripts/xml_metall.asp"
+
+            //https://www.cbr.ru/scripts/xml_metall.asp?date_req1=01/07/2001&date_req2=13/07/2001
+
 
         public static async Task<SolidBrokerTest.Repository.XML.Daily.ValCurs?> GetDailyDataAsync(DateOnly date)
         {
             SolidBrokerTest.Repository.XML.Daily.ValCurs? result = null;
-            //using (var client = new HttpClient())
-            //{
-            //    XmlSerializer serializer = new XmlSerializer(typeof(SolidBrokerTest.Repository.XML.Daily.ValCurs));
-            //    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            
 
-            //    var content = await client.GetAsync(DailyDataBaseURL + $"?date_req={date.Day.ToString("00")}/{date.Month.ToString("00")}/{date.Year.ToString("0000")}");
-
-            //    if(content.Content != null)
-            //    {
-            //        using (var sr = new StreamReader(await content.Content.ReadAsStreamAsync(), Encoding.GetEncoding("windows-1251")))
-            //        {
-            //             result = serializer.Deserialize(sr.BaseStream) as SolidBrokerTest.Repository.XML.Daily.ValCurs;
+             return await = LoadFromXmlWithDTD<Daily.ValCurs?>(DailyDataBaseURL + $"?date_req={date.Day.ToString("00")}/{date.Month.ToString("00")}/{date.Year.ToString("0000")}", validationCallBack: ValidationCallBack);
 
 
 
-
-            //        }
-
-
-            //    }
-
-                
-
-
-            //}
-
-             result = LoadFromXmlWithDTD<Daily.ValCurs?>(DailyDataBaseURL + $"?date_req={date.Day.ToString("00")}/{date.Month.ToString("00")}/{date.Year.ToString("0000")}", validationCallBack: ValidationCallBack);
-
-
-
-            return result;
+            
         }
 
 
@@ -89,21 +69,7 @@ namespace SolidBrokerTest.Repository.XML
         }
 
 
-        //public static DynamicCurrencyEnity GetDynamicCurrency(Dynamic.ValCurs valCurs)
-        //{
-
-        //    List<RateEntity> rates = new List<DB.Entities.RateEntity> ();
-
-        //    for (int i = 0; i < valCurs.Record.Length; i++)
-        //    {
-        //        rates.Add(new RateEntity(valCurs.Record[i].Id, Convert.ToInt32(valCurs.Record[i].Nominal), Convert.ToSingle(valCurs.Record[i].Value), ParseDate(valCurs.Record[i].Date) ?? new DateOnly()));
-
-
-        //    }
-
-        //    return new DynamicCurrencyEnity(valCurs.ID, rates);
-
-        //}
+       
 
 
         public static List<CurrencyWithRateEntity> GetCurrencyWithRateToDate(Daily.ValCurs curs)
@@ -114,19 +80,7 @@ namespace SolidBrokerTest.Repository.XML
 
             for (int i = 0; i < curs.Valute.Length; i++)
             {
-                //float try_value = default;
-                //try
-                //{
-                //    try_value = Convert.ToSingle(curs.Valute[i].Value, new CultureInfo("ru-RU"));
-                //}
-                //catch (Exception e)
-                //{
-
-                //    Console.WriteLine($"Ошибка в преобразовании строки {curs.Valute[i].Value} в число:" + e.Message);
-                //    return Currensies;
-                //}
-
-                
+               
 
                 Currensies.Add(new CurrencyWithRateEntity(curs.Valute[i].ID, curs.Valute[i].NumCode, curs.Valute[i].CharCode, curs.Valute[i].Name, Convert.ToInt32(curs.Valute[i].Nominal), curs.Valute[i].Value, ParseDate(curs.Date) ?? new DateOnly()));
 
