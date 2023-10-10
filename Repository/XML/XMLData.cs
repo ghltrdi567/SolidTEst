@@ -147,7 +147,7 @@ namespace SolidBrokerTest.Repository.XML
         {
             var some = GetDailyDataAsync(Date);
 
-            var second = GetMetallsAsync(Date, Date.AddDays(2));
+            
 
             return GetCurrencyWithRateToDate(some);
 
