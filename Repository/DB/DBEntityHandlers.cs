@@ -6,20 +6,7 @@ namespace Test2.Repository.DB
 {
     public class DBEntityHandlers
     {
-        public static void RecordData(DateOnly? start, DateOnly? end)
-        {
-            if (start == null || end == null) return;
-            var dataFromXML = XMLData.GetCurrencyToDate(start?? new DateOnly(), end ?? new DateOnly());
-
-            foreach (var item in dataFromXML)
-            {
-                SQLHandlers.AddCurrencyIfNotExists(item.GetCurrency());
-
-                SQLHandlers.AddRateIfNotExists(item.GetRate());
-
-            }
-
-        }
+        
 
         public static void RecordDataByDates(DateOnly start, DateOnly end)
         {

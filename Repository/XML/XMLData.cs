@@ -16,30 +16,37 @@ namespace SolidBrokerTest.Repository.XML
 {
     public class XMLData
     {
-        
+
         public static readonly string DailyDataBaseURL = "http://www.cbr.ru/scripts/XML_daily.asp";
 
-        
+
         public static readonly string DinamicDataBaseURL = "https://www.cbr.ru/scripts/XML_dynamic.asp";
 
-        public static readonly string DibamicMetalsBaseURL = "https://www.cbr.ru/scripts/xml_metall.asp"
+        public static readonly string MetalsBaseURL = "https://www.cbr.ru/scripts/xml_metall.asp";
 
-            //https://www.cbr.ru/scripts/xml_metall.asp?date_req1=01/07/2001&date_req2=13/07/2001
+        //https://www.cbr.ru/scripts/xml_metall.asp?date_req1=01/07/2001&date_req2=13/07/2001
 
 
-        public static async Task<SolidBrokerTest.Repository.XML.Daily.ValCurs?> GetDailyDataAsync(DateOnly date)
+        public static SolidBrokerTest.Repository.XML.Daily.ValCurs? GetDailyDataAsync(DateOnly date)
         {
             SolidBrokerTest.Repository.XML.Daily.ValCurs? result = null;
-            
 
-             return await = LoadFromXmlWithDTD<Daily.ValCurs?>(DailyDataBaseURL + $"?date_req={date.Day.ToString("00")}/{date.Month.ToString("00")}/{date.Year.ToString("0000")}", validationCallBack: ValidationCallBack);
+            result = LoadFromXmlWithDTD<Daily.ValCurs?>(DailyDataBaseURL + $"?date_req={date.Day.ToString("00")}/{date.Month.ToString("00")}/{date.Year.ToString("0000")}", validationCallBack: ValidationCallBack);
+
+            return result;
 
 
-
-            
         }
 
+        public static SolidBrokerTest.Repository.XML.Metall.Metall GetMetallsAsync(DateOnly datefrom, DateOnly dateto)
+        {
+            SolidBrokerTest.Repository.XML.Metall.Metall? result = null;
 
+            result = LoadFromXmlWithDTD<Metall.Metall>(MetalsBaseURL + $"?date_req1={datefrom.Day.ToString("00")}/{datefrom.Month.ToString("00")}/{datefrom.Year.ToString("0000")}&date_req2={dateto.Day.ToString("00")}/{dateto.Month.ToString("00")}/{dateto.Year.ToString("0000")}");
+
+            return result;
+
+        }
 
         public static async Task<SolidBrokerTest.Repository.XML.Dynamic.ValCurs?> GetDynamicDataAsync(DateOnly datefrom, DateOnly dateto, string ValuteID)
         {
@@ -68,11 +75,7 @@ namespace SolidBrokerTest.Repository.XML
             return result;
         }
 
-
-       
-
-
-        public static List<CurrencyWithRateEntity> GetCurrencyWithRateToDate(Daily.ValCurs curs)
+        public static List<CurrencyWithRateEntity> GetCurrencyWithRateToDate(Daily.ValCurs? curs)
         {
             var Currensies = new List<CurrencyWithRateEntity>();
 
@@ -113,10 +116,7 @@ namespace SolidBrokerTest.Repository.XML
         public static List<CurrencyWithRateEntity> GetCurrencyToDate(DateOnly begin, DateOnly End)
         {
 
-            
             var result = new List<CurrencyWithRateEntity>();
-
-            
 
             int daysInScope = End.DayNumber  - begin.DayNumber +1;
 
@@ -130,7 +130,9 @@ namespace SolidBrokerTest.Repository.XML
 
             for (int i = 0; i < daysInScope; i++)
             {
-                var first = GetDailyDataAsync(begin.AddDays(i)).Result;
+                var first = GetDailyDataAsync(begin.AddDays(i));
+                
+
                 if (first == null) continue;
                 result.AddRange(GetCurrencyWithRateToDate(first));
 
@@ -143,9 +145,11 @@ namespace SolidBrokerTest.Repository.XML
 
         public static List<CurrencyWithRateEntity> GetCurrencyToDate(DateOnly Date)
         {
+            var some = GetDailyDataAsync(Date);
 
+            var second = GetMetallsAsync(Date, Date.AddDays(2));
 
-            return GetCurrencyWithRateToDate(GetDailyDataAsync(Date).Result);
+            return GetCurrencyWithRateToDate(some);
 
         }
 
