@@ -41,6 +41,7 @@ namespace SolidBrokerTest.Repository.XML
         public static SolidBrokerTest.Repository.XML.Metall.Metall GetMetallsAsync(DateOnly datefrom, DateOnly dateto)
         {
             SolidBrokerTest.Repository.XML.Metall.Metall? result = null;
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             result = LoadFromXmlWithDTD<Metall.Metall>(MetalsBaseURL + $"?date_req1={datefrom.Day.ToString("00")}/{datefrom.Month.ToString("00")}/{datefrom.Year.ToString("0000")}&date_req2={dateto.Day.ToString("00")}/{dateto.Month.ToString("00")}/{dateto.Year.ToString("0000")}");
 
@@ -154,11 +155,11 @@ namespace SolidBrokerTest.Repository.XML
         }
 
 
-            public static T LoadFromXmlWithDTD<T>(string url, XmlSerializer serial = default, ValidationEventHandler validationCallBack = default)
+        public static T LoadFromXmlWithDTD<T>(string url, XmlSerializer serial = default, ValidationEventHandler validationCallBack = default)
             {
                 var settings = new XmlReaderSettings
                 {
-                    
+                   
                     DtdProcessing = DtdProcessing.Parse,
                     IgnoreWhitespace = true,
                 };
