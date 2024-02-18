@@ -27,7 +27,7 @@ namespace SolidBrokerTest.Repository.XML
         //https://www.cbr.ru/scripts/xml_metall.asp?date_req1=01/07/2001&date_req2=13/07/2001
 
 
-        public static SolidBrokerTest.Repository.XML.Daily.ValCurs? GetDailyDataAsync(DateOnly date)
+        public static SolidBrokerTest.Repository.XML.Daily.ValCurs? GetDailyData(DateOnly date)
         {
             SolidBrokerTest.Repository.XML.Daily.ValCurs? result = null;
 
@@ -131,7 +131,7 @@ namespace SolidBrokerTest.Repository.XML
 
             for (int i = 0; i < daysInScope; i++)
             {
-                var first = GetDailyDataAsync(begin.AddDays(i));
+                var first = GetDailyData(begin.AddDays(i));
                 
 
                 if (first == null) continue;
@@ -146,7 +146,7 @@ namespace SolidBrokerTest.Repository.XML
 
         public static List<CurrencyWithRateEntity> GetCurrencyToDate(DateOnly Date)
         {
-            var some = GetDailyDataAsync(Date);
+            var some = GetDailyData(Date);
 
             
 

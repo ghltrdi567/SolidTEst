@@ -87,37 +87,33 @@ namespace Test2.Pages
 
             }
 
-            //CurrencyList = SQLHandlers.GetAllCurrency(ref Error_Message);
-
-            var n = DateTime.Now;
-            var da = new DateOnly(n.Year, n.Month, n.Day);
-
-
-            var a = SolidBrokerTest.Repository.XML.XMLData.GetMetallsAsync(da.AddDays(-5), da );
-
-            ////по валюте(и датам)
-            //if (DISPLAY_MODE == 1)
-            //{
-
-            //    DynamicCurrency = DBEntityHandlers.GetAllCurrencyRate(Display_Currency_ID, ref Error_Message);
-
-            //}
-            ////дате (и всем валютам на дату)
-            //if (DISPLAY_MODE == 2)
-            //{
-
-            //    CurrencyToDate = DBEntityHandlers.GetCurrencyRatesToDate(Display_Currency_Date, ref Error_Message);
+            CurrencyList = SQLHandlers.GetAllCurrency(ref Error_Message);
 
 
 
-            //}
+            //по валюте(и датам)
+            if (DISPLAY_MODE == 1)
+            {
+
+                DynamicCurrency = DBEntityHandlers.GetAllCurrencyRate(Display_Currency_ID, ref Error_Message);
+
+            }
+            //дате (и всем валютам на дату)
+            if (DISPLAY_MODE == 2)
+            {
+
+                CurrencyToDate = DBEntityHandlers.GetCurrencyRatesToDate(Display_Currency_Date, ref Error_Message);
+
+
+
+            }
 
 
 
 
-            //var yul = await SolidBrokerTest.Repository.XML.XMLData.GetDailyDataAsync(new DateOnly(2002, 12, 24));
+            var yul = SolidBrokerTest.Repository.XML.XMLData.GetDailyData(new DateOnly(2002, 12, 24));
 
-            //var yul1 = await SolidBrokerTest.Repository.XML.XMLData.GetDynamicDataAsync(new DateOnly(2002, 12, 24), new DateOnly(2002, 12, 26), "R01010");
+            var yul1 = await SolidBrokerTest.Repository.XML.XMLData.GetDynamicDataAsync(new DateOnly(2002, 12, 24), new DateOnly(2002, 12, 26), "R01010");
 
 
         }

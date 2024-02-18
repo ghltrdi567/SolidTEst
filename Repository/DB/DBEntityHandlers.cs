@@ -30,6 +30,12 @@ namespace Test2.Repository.DB
 
         }
 
+
+
+        /// <summary>
+        /// Записывет бд данные о валютах
+        /// </summary>
+        /// <param name="Data"></param>
         public static void RecordData(DateOnly? Data)
         {
             if (Data == null) return;
